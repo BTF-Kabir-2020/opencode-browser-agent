@@ -1,0 +1,58 @@
+{
+  "name": "opencode-browser-agent",
+  "version": "1.1.0",
+  "description": "OpenCode plugin for agent-browser - policy-first browser automation with persistent sessions, dev tools and cross-platform installers (Windows / Linux desktop / Linux VPS).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx --yes esbuild@0.25.0 index.ts --bundle --platform=node --format=esm --target=esnext --outfile=dist/index.js && tsc",
+    "install:local": "powershell -ExecutionPolicy Bypass -File ./install.ps1",
+    "update:local": "powershell -ExecutionPolicy Bypass -File ./install.ps1 -Update",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "agent-browser",
+    "browser-automation",
+    "headless",
+    "windows",
+    "linux",
+    "powershell",
+    "vps",
+    "ai-agents",
+    "web-scraping",
+    "screenshots"
+  ],
+  "author": "Pouya Ghourchiani (BTF Kabir) <PouyaGH2080@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BTF-Kabir-2020/opencode-browser-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BTF-Kabir-2020/opencode-browser-agent/issues"
+  },
+  "homepage": "https://github.com/BTF-Kabir-2020/opencode-browser-agent#readme",
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=0.15.0",
+    "typescript": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.1.21",
+    "@types/bun": "latest",
+    "typescript": "^5.7.3"
+  }
+}

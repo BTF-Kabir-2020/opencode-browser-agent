@@ -1,0 +1,19 @@
+# Normalize line endings so the same repo works on Windows AND Linux.
+* text=auto eol=lf
+
+# Shell scripts MUST be LF or Linux fails with "bad interpreter: ^M".
+*.sh text eol=lf
+update.sh text eol=lf
+install.sh text eol=lf
+
+# PowerShell is safest with CRLF on Windows.
+*.ps1 text eol=crlf
+*.psm1 text eol=crlf
+
+# Binary-ish files - never touch.
+*.png binary
+*.jpg binary
+*.ico binary
+*.gz binary
+*.zip binary
+*.webm binary
