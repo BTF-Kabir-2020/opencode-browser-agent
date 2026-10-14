@@ -335,6 +335,43 @@ agent-browser snapshot -i         # Get fresh @refs
 agent-browser click @e1           # Use new refs
 ```
 
+### Browser identity (before you act)
+
+`--auto-connect` only tells you that *a* Chrome answered, not *which* profile,
+account, or tabs you now control. Before any login/account-dependent action:
+
+```bash
+agent-browser tab                                          # list tab ids/labels
+agent-browser get url
+agent-browser get title
+agent-browser get cdp-url
+```
+
+Use process/port evidence as read-only confirmation:
+
+```powershell
+# Windows
+Get-NetTCPConnection -LocalPort 9222 -State Listen |
+  Select-Object LocalAddress,LocalPort,OwningProcess
+Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" |
+  Where-Object { $_.CommandLine -match 'remote-debugging-port' } |
+  ForEach-Object { $_.ProcessId, $_.CommandLine }
+```
+
+```bash
+# Linux
+ss -ltnp | grep 9222
+ps -ww -o pid,args -C chrome | grep -- '--remote-debugging-port'
+```
+
+Rules:
+- Do not identify the browser from the profile label alone; compare tab URL, visible
+  account context, PID/port, and `--profile-directory`/user-data-dir evidence.
+- State the identity evidence in your report (port, PID, tabs, visible account).
+- If anything disagrees, stop and ask which Chrome/profile/account to use.
+- Never read or report credentials, cookies, tokens, 2FA, or unrelated tabs.
+- Never navigate/close/focus the user's existing tabs just to identify them.
+
 ## Attaching to your Chrome (CDP)
 
 Chrome only exposes CDP if it was launched with `--remote-debugging-port=9222`,

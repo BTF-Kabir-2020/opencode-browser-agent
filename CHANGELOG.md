@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-10-14
+
+### Added
+
+- Section 1a: browser identity verification before acting. Includes read-only
+  tab/URL/title/CDP diagnostics and Windows/Linux process/port checks.
+- Skill and README make clear that `--auto-connect` identifies only *a* Chrome
+  process, not a profile/account; identity must be verified from tabs, visible
+  account context, PID/port, and profile/process evidence.
+- Short rules now require identifying the attached Chrome before depending on
+  login/account state and reporting that evidence read only.
+
+### Changed
+
+- Renumbered short rules to include browser identity as a first-class safety rule.
+- Plugin/skill messaging now emphasizes read-only browser identity evidence
+  and never handling credentials, cookies, tokens, 2FA, or unrelated tabs.
+
 ## [1.2.0] - 2026-10-14
 
 ### Added

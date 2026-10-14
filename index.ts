@@ -35,6 +35,59 @@ visual/UX check, or a page with no API. If unsure, ask.
 - End your report stating which mode you used: (a) user's Chrome via
   --auto-connect, (b) fresh browser, (c) no browser used.
 
+## 1a. Identify the browser you are attached to before acting (read-only)
+
+\`--auto-connect\` only tells you *a* Chrome answered on a debugging port. It does
+not tell you *which* profile, account, or tabs you now control. Verify first; never
+guess from the session name or from a directory label alone.
+
+Attach verification, in order:
+
+1. Tabs and active frame:
+   - \`agent-browser --session <name> tab\`                # list ALL tabs, ids/labels
+   - \`agent-browser --session <name> get url\`
+   - \`agent-browser --session <name> get title\`
+   - \`agent-browser --session <name> get cdp-url\`
+2. Visible identity (snapshot only your NEW working tab, never the user's tabs):
+   - page heading/account name, profile avatar text, signed-in company/workspace
+   - repository/project name, active environment, admin vs viewer indicators.
+3. Chrome process evidence (read only):
+   - Windows: \`Get-NetTCPConnection -LocalPort <port> -State Listen |
+               Select-Object LocalAddress,LocalPort,OwningProcess\`
+     \`Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" |
+       Where-Object { $_.CommandLine -match 'remote-debugging-port' } |
+       ForEach-Object { $_.ProcessId, $_.CommandLine }\`
+   - Linux: \`ss -ltnp | grep <port>\` and \`ps -ww -o pid,args -C chrome |
+             grep -- '--remote-debugging-port'\`
+   - Look for \`--profile-directory="Profile 9"\` or \`--user-data-dir=...\`.
+4. CDP endpoint evidence (debugging port and profile evidence only):
+   - \`agent-browser --session <name> get cdp-url\`, plus \`DevToolsActivePort\`.
+   - Recent Chrome may answer \`GET /json/version\` with 404; that is not failure.
+
+Rules for identity:
+- A process/window/port, not the profile label, decides credentials.
+- A profile directory label can be stale, misleading, or mounted elsewhere.
+- Do not claim "this is Profile X / account Y" from one clue. State which evidence
+  you used and stop if anything disagrees.
+- Never read/export cookies, localStorage, session tokens, passwords, 2FA seeds,
+  bookmarks, or unrelated tabs/history.
+- Never inspect private user tabs/screenshots beyond the target task.
+- Do not navigate, close, or focus the user's existing tabs to identify them.
+- If the detected account/profile does not match the task, stop and ask which
+  Chrome/profile/account to use.
+- If no process has \`--remote-debugging-port\`, say so and offer choices; do not
+  silently launch another profile.
+- If the port is shared/unknown, use an explicit session:
+  \`agent-browser --session audit-<name> --auto-connect false --cdp <port> get url\`
+
+Store identity only as a short boundary list ("attached via: port 9222, PID ...,
+user-data-dir ..., tab tX, visible account: ..."). Do not store credentials or
+cookie values. If identity changes after navigation, re-detect it.
+
+Every attach report must state the mode used: (a) user's Chrome via
+--auto-connect, (b) explicit \`--cdp\` port, (c) fresh browser, with the identity
+evidence above.
+
 ## 2. Core loop
 
 agent-browser open <url>              # first navigation (keeps cookies)
@@ -244,6 +297,11 @@ recording, HAR, tracing, network routing).
    config forces autoConnect, use --auto-connect false --cdp <port> (section 4e);
    never kill Chrome or the agent-browser daemon, and tell the user which
    profile/account the port belongs to before acting for them
+11. identify the attached Chrome before depending on login/account state -
+   tabs + URL/title + process/port/user-data-dir evidence (section 1a);
+   never infer identity from one clue
+12. keep attach reports to read-only identity evidence; never handle
+   credentials, cookies, tokens, 2FA, or unrelated tab content
 `
 
 export const OpenCodeAgentBrowser: Plugin = async (ctx) => {
