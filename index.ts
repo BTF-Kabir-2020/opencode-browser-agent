@@ -19,6 +19,9 @@ visual/UX check, or a page with no API. If unsure, ask.
 
 - Reuse the user's already-running Chrome (keeps login state):
   agent-browser --auto-connect open <url>
+- If auto-connect hangs or fails, attach by explicit port instead:
+  agent-browser --auto-connect false --cdp <port> open <url>
+  (see section 4e - the debug port belongs to exactly ONE Chrome profile)
 - Work in a NEW tab: agent-browser tab new --label work <url>
 - Never navigate, screenshot, or close the user's existing tabs.
 - NEVER run "pkill -f agent-browser" and never "agent-browser close" a
@@ -110,6 +113,55 @@ report the exact mismatch instead of declaring success.
 - Root/container shells: add:  agent-browser open --args "--no-sandbox" <url>".
 - Same policy as everywhere: never --headed here, never pkill, never close.
 
+### 4e. Attaching to the user's real Chrome over CDP (any OS)
+
+Chrome only exposes CDP if it was started with --remote-debugging-port=9222.
+That port belongs to ONE browser process, and each Chrome profile runs as its
+own process - so the port identifies the profile too.
+
+Attach by port when --auto-connect is unreliable:
+  agent-browser --auto-connect false --cdp 9222 open <url>
+  agent-browser --session work --auto-connect false --cdp 9222 get url
+
+Gotchas that cost real time (do not rediscover them):
+- If ~/.agent-browser/config.json has "autoConnect": true, then any --cdp call
+  dies with "Cannot use --auto-connect and --cdp together". Always pair
+  --cdp with --auto-connect false (or use --config <clean file>).
+- Recent Chrome can answer HTTP GET /json/version with 404 / empty body while
+  CDP itself works perfectly. Never diagnose attachment via /json*; use
+  --cdp <port> or the DevToolsActivePort file.
+- chrome://inspect -> "Target discovery settings" / "Enable port forwarding"
+  does NOT open a debugging port on the local Chrome. Do not send users there.
+- A stale DevToolsActivePort file makes --auto-connect hang and then fail with
+  "Failed to read: ... (os error 10060)". Verify the port is really listening.
+- A wedged session daemon looks like: <session>.pid/.port exist in
+  ~/.agent-browser, the port is listening, yet every CLI call hangs or returns
+  the same 10060. A pending confirmation prompt can block it - approving
+  (agent-browser confirm <id>) releases it, and a fresh
+  "--session <name>" keeps you working meanwhile.
+- The active page is often about:blank, not the tab the user is looking at.
+  Work in a NEW tab; never navigate, screenshot or close their tabs.
+
+Read-only diagnostics - Windows PowerShell:
+  Get-NetTCPConnection -LocalPort 9222 -State Listen |
+    Select-Object LocalAddress,LocalPort,OwningProcess
+  Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" |
+    Where-Object { $_.CommandLine -match 'remote-debugging-port' }
+  Get-Content "$env:USERPROFILE\\.agent-browser\\default.port"
+
+Read-only diagnostics - Linux:
+  ss -ltnp | grep 9222
+  ps aux | grep -- '--remote-debugging-port'
+  cat ~/.agent-browser/default.port
+
+When the port is missing, offer the user a choice (never fix it yourself):
+- (a) close Chrome and relaunch the profile they want with:
+    chrome --remote-debugging-port=9222 --profile-directory=<name>   (keeps logins)
+  or (b) a dedicated automation profile they log into once.
+- NEVER pkill chrome or agent-browser, and never close a session you did not
+  create - that destroys their logins and open work.
+
+
 ## 5. Unicode round-trip test (Persian / emoji)
 
 Before submitting any text you cannot visually verify:
@@ -153,6 +205,12 @@ First stop for anything weird:
   agent-browser doctor                 # env, Chrome, daemons, config, launch
 - Chrome won't launch on Linux: agent-browser install --with-deps; if still
   failing in a container/root shell: agent-browser open --args "--no-sandbox" <url>
+- every command hangs, or "Failed to read: ... (os error 10060)" -> wedged
+  session daemon or stale DevToolsActivePort; see section 4e before touching it
+- "Cannot use --auto-connect and --cdp together" -> the config file forces
+  autoConnect; add --auto-connect false next to --cdp
+- HTTP GET /json/version returns 404 / empty -> normal on recent Chrome;
+  attach with --cdp <port> instead of HTTP discovery
 - "ref not found" -> re-snapshot (refs go stale on every page change)
 - element in DOM but not in snapshot -> scroll / wait, then re-snapshot
 - overlay swallows the click -> dismiss it, re-snapshot, re-click
@@ -182,6 +240,10 @@ recording, HAR, tracing, network routing).
 8. headless boxes (Linux terminal/CI/container): no --headed; GUI desktop only
 9. same skill covers Windows PowerShell, Linux bash, Linux GUI and headless -
    pick the matching subsection in sections 4-6
+10. attaching to a real Chrome: try --auto-connect first; if it hangs or the
+   config forces autoConnect, use --auto-connect false --cdp <port> (section 4e);
+   never kill Chrome or the agent-browser daemon, and tell the user which
+   profile/account the port belongs to before acting for them
 `
 
 export const OpenCodeAgentBrowser: Plugin = async (ctx) => {

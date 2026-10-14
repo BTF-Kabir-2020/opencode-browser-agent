@@ -335,6 +335,62 @@ agent-browser snapshot -i         # Get fresh @refs
 agent-browser click @e1           # Use new refs
 ```
 
+## Attaching to your Chrome (CDP)
+
+Chrome only exposes CDP if it was launched with `--remote-debugging-port=9222`,
+and that port belongs to **one** browser process - each Chrome profile is its
+own process, so the port identifies the profile too.
+
+```bash
+# preferred: reuse the running Chrome
+agent-browser --auto-connect open <url>
+
+# fallback: attach by explicit port
+agent-browser --auto-connect false --cdp 9222 open <url>
+agent-browser --session work --auto-connect false --cdp 9222 get url
+```
+
+Known gotchas:
+
+- If `~/.agent-browser/config.json` sets `"autoConnect": true`, every `--cdp`
+  call fails with `Cannot use --auto-connect and --cdp together`. Pair it with
+  `--auto-connect false` (or use `--config <clean file>`).
+- Recent Chrome can answer `GET /json/version` with 404/empty while CDP works
+  fine - never diagnose attachment with `/json*`, use `--cdp <port>`.
+- `chrome://inspect` -> *Target discovery settings* / *Enable port forwarding*
+  does **not** open a debugging port on the local Chrome.
+- A stale `DevToolsActivePort` makes `--auto-connect` hang, then fail with
+  `Failed to read: ... (os error 10060)`. Check the port is really listening.
+- A wedged session daemon (`~/.agent-browser/<session>.pid|.port` exist and the
+  port listens, yet every call hangs with `10060`): approve the pending
+  confirmation (`agent-browser confirm <id>`), work in a fresh
+  `--session <name>`, and never `pkill` Chrome or the daemon.
+
+Read-only diagnostics:
+
+```powershell
+# Windows
+Get-NetTCPConnection -LocalPort 9222 -State Listen |
+  Select-Object LocalAddress,LocalPort,OwningProcess
+Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" |
+  Where-Object { $_.CommandLine -match 'remote-debugging-port' }
+Get-Content "$env:USERPROFILE\.agent-browser\default.port"
+```
+
+```bash
+# Linux
+ss -ltnp | grep 9222
+ps aux | grep -- '--remote-debugging-port'
+cat ~/.agent-browser/default.port
+```
+
+If no Chrome has the flag, ask the user to relaunch the profile they want:
+
+```powershell
+# closes nothing by itself - the user quits Chrome first, logins are kept
+chrome.exe --remote-debugging-port=9222 --profile-directory="Profile 3"
+```
+
 ## Auto-Trigger Prompts
 
 The plugin automatically suggests loading the skill when your prompt contains:

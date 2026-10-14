@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-10-14
+
+### Added
+
+- Skill section 4e: attaching to a real Chrome over CDP - explicit
+  `--auto-connect false --cdp <port>` usage, the `autoConnect` config conflict,
+  404 `/json/version` on recent Chrome, stale `DevToolsActivePort`, wedged
+  session daemons, per-profile browser processes, and read-only diagnostics for
+  Windows and Linux.
+- README troubleshooting: "Attaching to your Chrome (CDP)" with the same steps.
+- Short rule 10: how to attach, and never to kill Chrome or the daemon.
+
+### Changed
+
+- Section 1 (attach rules) and section 9 (failures) now point at the CDP path
+  and the exact `10060` / "Cannot use --auto-connect and --cdp together"
+  symptoms.
+
 ## [1.1.0] - 2026-10-14
 
 ### Added

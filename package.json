@@ -1,6 +1,6 @@
 {
   "name": "opencode-browser-agent",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "OpenCode plugin for agent-browser - policy-first browser automation with persistent sessions, dev tools and cross-platform installers (Windows / Linux desktop / Linux VPS).",
   "type": "module",
   "main": "./dist/index.js",
