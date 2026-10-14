@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](#easy-install--easy-update-windows-linux-macos)
 [![agent-browser](https://img.shields.io/badge/agent--browser-0.27%2B-informational)](https://github.com/vercel-labs/agent-browser)
-[![OpenCode](https://img.shields.io/badge/opencode-plugin-1.x-brightgreen)](https://opencode.ai)
+[![OpenCode](https://img.shields.io/badge/OpenCode-Plugin%201.x-brightgreen?style=flat-square)](https://opencode.ai)
 
 OpenCode plugin for [agent-browser](https://github.com/vercel-labs/agent-browser) - browser automation for AI agents with persistent sessions, dev tools, cross-platform installers (Windows / Linux desktop / Linux VPS-headless) and a rewritten, policy-first skill.
 
