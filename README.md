@@ -4,10 +4,29 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](#easy-install--easy-update-windows-linux-macos)
 [![agent-browser](https://img.shields.io/badge/agent--browser-0.27%2B-informational)](https://github.com/vercel-labs/agent-browser)
 [![OpenCode](https://img.shields.io/badge/OpenCode-Plugin%201.x-brightgreen?style=flat-square)](https://opencode.ai)
+[![CI](https://github.com/BTF-Kabir-2020/opencode-browser-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/BTF-Kabir-2020/opencode-browser-agent/actions/workflows/ci.yml)
 
 OpenCode plugin for [agent-browser](https://github.com/vercel-labs/agent-browser) - browser automation for AI agents with persistent sessions, dev tools, cross-platform installers (Windows / Linux desktop / Linux VPS-headless) and a rewritten, policy-first skill.
 
 Maintained by **Pouya Ghourchiani (BTF Kabir)**.
+
+## Why this plugin?
+
+- **Uses your real browser, not a throwaway one.** It attaches to your already-running Chrome with `--auto-connect` — your logins and tabs stay, and the skill forbids killing or closing your browser.
+- **Policy-first.** A rewritten skill constrains how the agent drives the browser (no `pkill`, no hijacking unrelated tabs, privacy-respecting defaults), rather than leaving the model to improvise.
+- **One-command install everywhere.** Windows PowerShell, Linux desktop, and headless VPS, with a matching one-command update path.
+- **Optional, opt-in Obscura engine.** A lightweight local CDP backend you can switch on deliberately (Chrome stays the default); see [`docs/obscura.md`](docs/obscura.md).
+
+## Demo
+
+```bash
+# Start from your already-running Chrome (your logins intact, no new profile)
+agent-browser --auto-connect open https://example.com
+agent-browser screenshot page.png
+
+# Or let the opt-in Obscura backend manage a local CDP engine instead
+# (tool: obscura_backend, actions: start / attach / status / doctor / stop)
+```
 
 ## Features
 

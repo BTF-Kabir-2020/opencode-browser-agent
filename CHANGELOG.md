@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-10-15
+
+### Changed
+
+- `LICENSE` is now the standard, unmodified MIT text so GitHub detects the
+  license (previously reported as "NOASSERTION"). Upstream attribution for
+  `opencode-agent-browser` moved to a new `NOTICE` file.
+
+### Added
+
+- GitHub Actions CI (`.github/workflows/ci.yml`) — typecheck, build, and unit
+  tests on Ubuntu and Windows — plus a CI badge in the README.
+- Issue templates and a "Why this plugin?" / "Demo" section in the README.
+
 ## [1.4.0] - 2026-10-15
 
 ### Added

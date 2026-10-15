@@ -2,12 +2,6 @@ MIT License
 
 Copyright (c) 2026 Pouya Ghourchiani (BTF Kabir)
 
-This project is based on opencode-agent-browser
-(https://github.com/crottolo/opencode-agent-browser),
-Copyright (c) Nicola Crotti, released under the MIT License.
-It has since been substantially rewritten (browser-attach policy,
-cross-platform installers, rewritten skill, dead code removed).
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
