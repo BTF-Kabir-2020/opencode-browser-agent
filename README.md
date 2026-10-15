@@ -569,7 +569,11 @@ MIT - see [LICENSE](LICENSE).
 
 Copyright (c) 2026 Pouya Ghourchiani (BTF Kabir).
 
+Derived from [opencode-agent-browser](https://github.com/crottolo/opencode-agent-browser)
+(MIT, Copyright (c) Nicola Crotti); see [NOTICE](NOTICE) for the upstream license text.
+
 ## Credits
 
+- [opencode-agent-browser](https://github.com/crottolo/opencode-agent-browser) by Nicola Crotti - the project this plugin is derived from (MIT)
 - [agent-browser](https://github.com/vercel-labs/agent-browser) by Vercel Labs
 - [OpenCode](https://opencode.ai) plugin system
