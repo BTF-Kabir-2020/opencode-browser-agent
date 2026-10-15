@@ -456,9 +456,10 @@ and fixture mode (`--allow-private-network`) is **off by default** and only
 allowed with explicit loopback-only targets. Cleanup terminates a process only
 after positively verifying ownership.
 
-It is **not** a Chrome replacement and makes no speed/parity claim; iframe
-content is a confirmed limitation. Full details, security posture, the measured
-compatibility matrix, and rollback: **[`docs/obscura.md`](docs/obscura.md)**.
+It is **not** a Chrome replacement and makes no speed/parity claim; `iframe
+srcdoc` content is a confirmed limitation (Obscura 0.2.4). Full details, security
+posture, the measured compatibility matrix, and rollback:
+**[`docs/obscura.md`](docs/obscura.md)**.
 
 ## Auto-Trigger Prompts
 

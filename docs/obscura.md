@@ -67,7 +67,8 @@ Honest residual risk:
 A 22-case matrix (Chrome-baseline gate first) was run. Final result:
 
 - **19 / 22 valid PASS**
-- 1 EXPECTED-FAIL — iframe `contentDocument` content (confirmed Obscura limitation)
+- 1 EXPECTED-FAIL — `iframe srcdoc` content (confirmed: Obscura 0.2.4 does not load
+  `srcdoc`; the iframe resolves to an empty `about:blank`)
 - 1 DOCUMENTED — cross-origin iframe (same-origin policy applies to every engine)
 - **0 quarantined, 0 fail**
 
@@ -79,7 +80,8 @@ screenshots, large DOM, and session shape.
 
 - **No Chrome-parity claim.** Features and fidelity differ; expect gaps.
 - **No speed or cold-start claim.**
-- **iframe content** is a confirmed limitation on Obscura.
+- **iframe `srcdoc`** is a confirmed limitation on Obscura 0.2.4 (the attribute is
+  ignored; same-origin iframe content otherwise works).
 - The matrix used a **fresh automation Chrome**, not your profile, so only public,
   login-free cases were exercised.
 - Some behaviours are **agent-browser client** characteristics, not Obscura bugs,

@@ -51,7 +51,13 @@
   "homepage": "https://github.com/BTF-Kabir-2020/opencode-browser-agent#readme",
   "peerDependencies": {
     "@opencode-ai/plugin": ">=0.15.0",
+    "agent-browser": ">=0.27.0",
     "typescript": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "agent-browser": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@opencode-ai/plugin": "^1.1.21",
