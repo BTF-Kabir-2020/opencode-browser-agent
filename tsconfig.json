@@ -3,6 +3,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "declaration": true,
     "declarationDir": "dist",
     "emitDeclarationOnly": true,
@@ -14,5 +15,5 @@
     "types": ["bun-types"]
   },
   "include": ["index.ts"],
-  "exclude": ["node_modules", "dist", "src"]
+  "exclude": ["node_modules", "dist"]
 }

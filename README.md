@@ -20,6 +20,7 @@ Maintained by **Pouya Ghourchiani (BTF Kabir)**.
 - **JavaScript Execution** - Run arbitrary JS in page context
 - **Video Streaming** - Real-time WebSocket streaming for visual monitoring
 - **Network Mocking** - Intercept and mock API responses
+- **Optional Obscura backend** - opt-in, never-automatic local CDP engine (Chrome stays default); see [`docs/obscura.md`](docs/obscura.md)
 - **Zero Config** - Works out of the box
 
 ## Easy install / Easy update (Windows, Linux, macOS)
@@ -175,6 +176,10 @@ OpenCode                    Plugin                      agent-browser
    - Dev tools access
    - Troubleshooting
 
+4. **Opt-in Obscura backend** - Registers the experimental `obscura_backend` tool
+   (start/attach/status/doctor/stop). Chrome stays the default; nothing runs
+   unless explicitly started. See [`docs/obscura.md`](docs/obscura.md).
+
 ## Quick Reference
 
 ### Open Browser (reuse the user's Chrome, never kill the daemon)
@@ -241,11 +246,11 @@ git clone https://github.com/BTF-Kabir-2020/opencode-browser-agent.git
 cd opencode-browser-agent
 ```
 
-Edit `index.ts` to customize:
+Edit `src/skill.ts` (the skill template) or `index.ts` (the plugin entry/tools) to customize:
 
 #### Change Default Viewport
 ```typescript
-// Find this line in skillTemplate:
+// Find this line in src/skill.ts:
 agent-browser set viewport 1920 1080
 
 // Change to your preferred size:
@@ -428,6 +433,33 @@ If no Chrome has the flag, ask the user to relaunch the profile they want:
 chrome.exe --remote-debugging-port=9222 --profile-directory="Profile 3"
 ```
 
+## Experimental opt-in: Obscura backend
+
+Chrome is the default and is behaviourally unchanged. The plugin can **optionally**
+launch a local [Obscura](https://github.com/h4ckf0r0day/obscura) CDP engine and
+attach `agent-browser` to it via the generic `--cdp <port>` path. It is
+**opt-in, per-run, and never starts automatically**.
+
+```text
+# start a local engine on an explicit port (requires OBSCURA_BIN or obscura on PATH)
+obscura_backend { "action": "start", "port": 9600 }
+# then use the returned args:
+agent-browser --session obscura-work --auto-connect false --cdp 9600 open https://example.com
+# inspect / clean up owned runs only:
+obscura_backend { "action": "status" }
+obscura_backend { "action": "stop" }
+```
+
+Safety is enforced: binds **`127.0.0.1`** only, always an **explicit port** from
+the pool `9600–9699` (reserved ports refused), **never** `--allow-file-access`,
+and fixture mode (`--allow-private-network`) is **off by default** and only
+allowed with explicit loopback-only targets. Cleanup terminates a process only
+after positively verifying ownership.
+
+It is **not** a Chrome replacement and makes no speed/parity claim; iframe
+content is a confirmed limitation. Full details, security posture, the measured
+compatibility matrix, and rollback: **[`docs/obscura.md`](docs/obscura.md)**.
+
 ## Auto-Trigger Prompts
 
 The plugin automatically suggests loading the skill when your prompt contains:
@@ -480,7 +512,15 @@ npm run build
 ### Project Structure
 ```
 opencode-browser-agent/
-├── index.ts          # Main plugin code with skill template (single source)
+├── index.ts          # Plugin entry: tools + skill loader (thin)
+├── src/
+│   ├── skill.ts      # Skill template/description (single source)
+│   └── obscura/      # Opt-in Obscura backend (launcher, manager, runtime)
+├── test/
+│   ├── obscura.test.ts   # Unit tests (24)
+│   └── obscura.e2e.ts    # Real-binary E2E smoke test
+├── docs/
+│   └── obscura.md    # Opt-in backend: usage, security, matrix, rollback
 ├── package.json      # npm package config (build = esbuild + tsc)
 ├── tsconfig.json     # TypeScript config
 ├── install.ps1       # Easy install/update - Windows

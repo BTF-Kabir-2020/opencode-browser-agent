@@ -5,6 +5,29 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-10-15
+
+### Added
+
+- Optional, **opt-in** Obscura CDP backend via the `obscura_backend` tool
+  (`start` / `attach` / `status` / `doctor` / `stop`). Chrome remains the default
+  and is unchanged; nothing starts automatically. Requires `OBSCURA_BIN` or
+  `obscura` on `PATH`.
+- Enforced safety: `127.0.0.1`-only bind, explicit port from the `9600-9699`
+  pool (reserved ports refused), never `--allow-file-access`; fixture mode
+  (`--allow-private-network`) is off by default and only allowed with explicit
+  loopback-only targets; cleanup terminates a process only after positively
+  verifying ownership.
+- Unit tests (24) and a real-binary E2E smoke test (10 assertions) — `npm test`,
+  `npm run test:e2e`.
+- `docs/obscura.md` — usage, security posture, measured compatibility matrix,
+  honest limitations, and rollback.
+
+### Notes
+
+- Experimental; not a Chrome replacement. No speed/parity claim. `iframe`
+  content is a confirmed limitation.
+
 ## [1.3.0] - 2026-10-14
 
 ### Added

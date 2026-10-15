@@ -1,6 +1,6 @@
 {
   "name": "opencode-browser-agent",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "OpenCode plugin for agent-browser - policy-first browser automation with persistent sessions, dev tools and cross-platform installers (Windows / Linux desktop / Linux VPS).",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,6 +18,9 @@
   ],
   "scripts": {
     "build": "npx --yes esbuild@0.25.0 index.ts --bundle --platform=node --format=esm --target=esnext --outfile=dist/index.js && tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-transform-types --test test/obscura.test.ts",
+    "test:e2e": "node --experimental-transform-types test/obscura.e2e.ts",
     "install:local": "powershell -ExecutionPolicy Bypass -File ./install.ps1",
     "update:local": "powershell -ExecutionPolicy Bypass -File ./install.ps1 -Update",
     "prepublishOnly": "npm run build"
