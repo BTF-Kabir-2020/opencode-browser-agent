@@ -176,6 +176,12 @@ Attach by port when --auto-connect is unreliable:
   agent-browser --auto-connect false --cdp 9222 open <url>
   agent-browser --session work --auto-connect false --cdp 9222 get url
 
+PowerShell (Windows) must use the call operator -- the -- in front of flags
+otherwise errors in an expression. Launch example:
+  & "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --remote-debugging-port=9222 --profile-directory="Profile 9"
+Linux/macOS example:
+  "chrome" --remote-debugging-port=9222 --profile-directory="Profile 9"
+
 Gotchas that cost real time (do not rediscover them):
 - If ~/.agent-browser/config.json has "autoConnect": true, then any --cdp call
   dies with "Cannot use --auto-connect and --cdp together". Always pair
@@ -183,8 +189,23 @@ Gotchas that cost real time (do not rediscover them):
 - Recent Chrome can answer HTTP GET /json/version with 404 / empty body while
   CDP itself works perfectly. Never diagnose attachment via /json*; use
   --cdp <port> or the DevToolsActivePort file.
-- chrome://inspect -> "Target discovery settings" / "Enable port forwarding"
-  does NOT open a debugging port on the local Chrome. Do not send users there.
+- chrome://inspect -> "Remote debugging": "Allow remote debugging" can start a
+  localhost:9222 server for this Chrome instance after the user clicks Allow.
+  Leave that tab/page open while connecting. This is often enough for read-only
+  CDP attach, but some builds still time out or refuse the handshake.
+- Even after Allow is granted, \`--auto-connect\` / \`--cdp\` may time out or see an
+  empty /json/version response. If that happens, do NOT launch another Chrome:
+  ask/restart with an explicit port (see below) and verify through DevToolsActivePort.
+- Real \`chrome://inspect#remote-debugging\` is not the same as Chrome's normal
+  tab discovery. Never change the user's tabs, cookies, or permissions.
+- \`--profile\` (agent-browser) selects an automation Chrome using that profile's
+  data; it does not attach to an already-running visible Chrome unless that
+  browser is also debuggable via a real --remote-debugging-port.
+- \`--profile "Profile X"\` is an automation launch/reuse path. It is not proof
+  that you are attached to the user's currently visible Chrome windows.
+- Although the Allow dialog can open a temporary localhost:9222 listener, it
+  has behaved inconsistently during real use. If agent-browser times out, treat
+  the page as non-debuggable until a fresh port succeeds.
 - A stale DevToolsActivePort file makes --auto-connect hang and then fail with
   "Failed to read: ... (os error 10060)". Verify the port is really listening.
 - A wedged session daemon looks like: <session>.pid/.port exist in
@@ -208,9 +229,19 @@ Read-only diagnostics - Linux:
   cat ~/.agent-browser/default.port
 
 When the port is missing, offer the user a choice (never fix it yourself):
-- (a) close Chrome and relaunch the profile they want with:
-    chrome --remote-debugging-port=9222 --profile-directory=<name>   (keeps logins)
-  or (b) a dedicated automation profile they log into once.
+- (a) close Chrome carefully or relaunch the profile they want with the call:
+    Windows PowerShell:
+      & "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --remote-debugging-port=9222 --profile-directory="Profile 9"
+    Linux/macOS:
+      google-chrome --remote-debugging-port=9222 --profile-directory="Profile 9"
+    (works even for profiles of the same existing user; keeps logins)
+- (b) a dedicated automation profile logged into once.
+- (c) if the port exists but handshake times out: leave diagnostics untouched and
+    retry once after confirming DevToolsActivePort; do not attempt to revoke or
+    silently re-open Chrome.
+- If \`chrome://inspect/#remote-debugging\` opened a temporary localhost:9222
+  port but agent-browser reports timed out, tell the user that permission was
+  granted but CDP still is not stable, and offer the explicit launch command.
 - NEVER pkill chrome or agent-browser, and never close a session you did not
   create - that destroys their logins and open work.
 
