@@ -1,6 +1,7 @@
 # opencode-browser-agent
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![npm](https://img.shields.io/npm/v/opencode-browser-agent.svg)](https://www.npmjs.com/package/opencode-browser-agent)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](#easy-install--easy-update-windows-linux-macos)
 [![agent-browser](https://img.shields.io/badge/agent--browser-0.27%2B-informational)](https://github.com/vercel-labs/agent-browser)
 [![OpenCode](https://img.shields.io/badge/OpenCode-Plugin%201.x-brightgreen?style=flat-square)](https://opencode.ai)
@@ -114,16 +115,22 @@ agent-browser install  # Download Chromium
 
 ### 2. Install this plugin
 
-Either run `install.ps1` (recommended), or add the built plugin to your
-`opencode.json`:
+**From npm** (easiest) — add it by name; opencode fetches and loads it:
+
+```json
+{
+  "plugin": ["opencode-browser-agent"]
+}
+```
+
+**From a local build** (for development) — either run `install.ps1`
+(recommended), or point `opencode.json` at the built file:
 
 ```json
 {
   "plugin": ["file:///abs/path/to/opencode-browser-agent/dist/index.js"]
 }
 ```
-
-(the deployed package name `"opencode-browser-agent"` also works)
 
 ## Usage Examples
 
