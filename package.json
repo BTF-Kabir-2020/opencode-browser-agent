@@ -1,6 +1,6 @@
 {
   "name": "opencode-browser-agent",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "OpenCode plugin for agent-browser - policy-first browser automation with persistent sessions, dev tools and cross-platform installers (Windows / Linux desktop / Linux VPS).",
   "type": "module",
   "main": "./dist/index.js",
@@ -14,7 +14,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "NOTICE"
   ],
   "scripts": {
     "build": "npx --yes esbuild@0.25.0 index.ts --bundle --platform=node --format=esm --target=esnext --outfile=dist/index.js && tsc",
