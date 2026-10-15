@@ -25,8 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Notes
 
-- Experimental; not a Chrome replacement. No speed/parity claim. `iframe`
-  content is a confirmed limitation.
+- Experimental; not a Chrome replacement. No speed/parity claim. `iframe srcdoc`
+  is a confirmed limitation (Obscura 0.2.4 does not load it).
 
 ## [1.3.0] - 2026-10-14
 
