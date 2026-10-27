@@ -1,4 +1,4 @@
-import { Plugin } from "@opencode/plugin"
+import { Plugin, Skill } from "@opencode/plugin"
 import { SKILL_NAME, skillDescription, skillTemplate } from "./src/skill.ts"
 import {
   attachArgsFor,
@@ -180,6 +180,18 @@ export default Plugin.define({
             }
           }
         },
+      })
+    })
+
+    // Register the skill so it shows up in OpenCode's /skills list.
+    await ctx.skill.transform((editor) => {
+      editor.add({
+        id: Skill.ID.make("agent-browser"),
+        name: Skill.Name.make("agent-browser"),
+        description: skillDescription,
+        path: "/builtin/agent-browser.md" as any,
+        content: skillTemplate,
+        autoinvoke: false,
       })
     })
 
