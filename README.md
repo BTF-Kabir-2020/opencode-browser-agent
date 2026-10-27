@@ -111,6 +111,7 @@ Notes for a GUI-less box:
 ```bash
 npm install -g agent-browser
 agent-browser install  # Download Chromium
+# Tip: pin the agent-browser version you tested and re-audit the skill on upgrade.
 ```
 
 ### 2. Install this plugin

@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-10-27
+
+### Added
+
+- Security hardening in skill (upstream PR #2 inspired): SECURITY section
+  (prompt injection, session trust, screencast port, profile isolation,
+  disposable credentials), (SECRET) markers on cookie/storage/network dumps,
+  cookie-banner softer policy, screencast port warning.
+- Pinned `@types/bun` to `^1.4.3`.
+
 ## [2.0.0] - 2026-10-27
 
 ### Changed
