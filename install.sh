@@ -41,7 +41,7 @@ fi
 
 # ------------------------------------------------------------ 2. node deps
 step "dependencies"
-if [ ! -d "$REPO/node_modules/@opencode-ai/plugin" ]; then
+if [ ! -d "$REPO/node_modules/@opencode/plugin" ]; then
   warn "node_modules missing -> npm install"
   (cd "$REPO" && npm install --no-fund --no-audit)
 fi
@@ -120,9 +120,9 @@ if [ -f "$CFG" ]; then
     let raw = fs.readFileSync(cfgPath, "utf8");
     if (raw.charCodeAt(0) === 0xFEFF) raw = raw.slice(1);
     const cfg = JSON.parse(raw);
-    cfg.plugin = [pathToFileURL(distPath).href];
+    cfg.plugins = [pathToFileURL(distPath).href];
     fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2) + "\n");
-    console.log("    OK  plugin -> " + cfg.plugin[0]);
+    console.log("    OK  plugin -> " + cfg.plugins[0]);
   ' "$CFG" "$DIST/index.js"
 else
   warn "$CFG not found - add the plugin entry manually"

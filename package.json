@@ -1,6 +1,6 @@
 {
   "name": "opencode-browser-agent",
-  "version": "1.4.5",
+  "version": "2.0.0",
   "description": "OpenCode plugin for agent-browser - policy-first browser automation with persistent sessions, dev tools and cross-platform installers (Windows / Linux desktop / Linux VPS).",
   "type": "module",
   "main": "./dist/index.js",
@@ -9,8 +9,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "files": [
@@ -18,7 +17,7 @@
     "NOTICE"
   ],
   "scripts": {
-    "build": "npx --yes esbuild@0.25.0 index.ts --bundle --platform=node --format=esm --target=esnext --outfile=dist/index.js && tsc",
+    "build": "npx --yes esbuild@0.25.0 index.ts --bundle --platform=node --format=esm --target=esnext --outfile=dist/index.js --external:@opencode/plugin && tsc",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-transform-types --test test/obscura.test.ts",
     "test:e2e": "node --experimental-transform-types test/obscura.e2e.ts",
@@ -51,12 +50,12 @@
   },
   "homepage": "https://github.com/BTF-Kabir-2020/opencode-browser-agent#readme",
   "peerDependencies": {
-    "@opencode-ai/plugin": ">=0.15.0",
+    "@opencode/plugin": ">=2.0.0",
     "typescript": ">=5.0.0"
   },
   "peerDependenciesMeta": {},
   "devDependencies": {
-    "@opencode-ai/plugin": "^1.1.21",
+    "@opencode/plugin": "^2.1.4",
     "@types/bun": "latest",
     "typescript": "^5.7.3"
   },

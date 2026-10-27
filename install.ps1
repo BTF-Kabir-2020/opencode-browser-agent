@@ -45,7 +45,7 @@ if ($Update) {
 
 # ------------------------------------------------------------ 2. node deps
 Write-Step "dependencies"
-if (-not (Test-Path (Join-Path $repo 'node_modules\@opencode-ai\plugin'))) {
+if (-not (Test-Path (Join-Path $repo 'node_modules\@opencode\plugin'))) {
     Write-Host "    node_modules missing -> npm install"
     Push-Location $repo
     try {
@@ -132,8 +132,8 @@ if (Test-Path $cfgPath) {
     if ($raw[0] -eq [char]0xFEFF) { $raw = $raw.Substring(1) }
     $cfg = $raw | ConvertFrom-Json
     $distUrl = 'file:///' + ((Join-Path $dist 'index.js') -replace '\\', '/')
-    if (-not $cfg.plugin) { $cfg | Add-Member -NotePropertyName plugin -NotePropertyValue @() }
-    $cfg.plugin = @($distUrl)
+    if (-not $cfg.plugins) { $cfg | Add-Member -NotePropertyName plugins -NotePropertyValue @() }
+    $cfg.plugins = @($distUrl)
     $json = $cfg | ConvertTo-Json -Depth 10
     [IO.File]::WriteAllText($cfgPath, $json + "`r`n", $utf8NoBom)
     Write-Ok "plugin -> $distUrl"

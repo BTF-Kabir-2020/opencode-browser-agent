@@ -285,6 +285,27 @@ Rules for the Obscura backend (do not circumvent):
   process name + port + ready-file) before terminating anything, and never
   kills by process name or port and never closes unrelated sessions.
 
+## 4g. Dev tools, network mocking, video streaming (optional)
+
+Dev tools (always use --json for parseable output):
+  agent-browser console --json                 # all console logs
+  agent-browser errors --json                  # page errors only
+  agent-browser cookies get --json             # cookies
+  agent-browser storage local --json           # localStorage
+  agent-browser storage session --json         # sessionStorage
+  agent-browser eval "document.title"          # run JS in page context
+  agent-browser network requests --json        # captured requests
+
+Network mocking / blocking:
+  agent-browser network route "*/api/*" --abort               # block
+  agent-browser network route "*/api/*" --body '{"mock":true}' # mock response
+  agent-browser network unroute                                # remove routes
+
+Video streaming (real-time WebSocket, optional):
+  AGENT_BROWSER_STREAM_PORT=9223 agent-browser open <url> --headed
+  # connect via WebSocket at ws://localhost:9223
+  # frames: {"type":"frame","data":"<base64 JPEG>"}
+
 ## 5. Unicode round-trip test (Persian / emoji)
 
 Before submitting any text you cannot visually verify:

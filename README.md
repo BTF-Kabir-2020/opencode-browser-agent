@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/opencode-browser-agent.svg)](https://www.npmjs.com/package/opencode-browser-agent)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](#easy-install--easy-update-windows-linux-macos)
 [![agent-browser](https://img.shields.io/badge/agent--browser-0.27%2B-informational)](https://github.com/vercel-labs/agent-browser)
-[![OpenCode](https://img.shields.io/badge/OpenCode-Plugin%201.x-brightgreen?style=flat-square)](https://opencode.ai)
+[![OpenCode](https://img.shields.io/badge/OpenCode-Plugin%202.x-brightgreen?style=flat-square)](https://opencode.ai)
 [![CI](https://github.com/BTF-Kabir-2020/opencode-browser-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/BTF-Kabir-2020/opencode-browser-agent/actions/workflows/ci.yml)
 
 OpenCode plugin for [agent-browser](https://github.com/vercel-labs/agent-browser) - browser automation for AI agents with persistent sessions, dev tools, cross-platform installers (Windows / Linux desktop / Linux VPS-headless) and a rewritten, policy-first skill.
@@ -75,7 +75,7 @@ What the scripts do (identical on both platforms):
 6. points the global `opencode.json` at the local build via a `file:///` URL
 7. strips the UTF-8 BOM from `~/.agent-browser/config.json`
 
-Rollback: set `"plugin": ["opencode-browser-agent"]` back in
+Rollback: set `"plugins": ["opencode-browser-agent"]` back in
 `~/.config/opencode/opencode.json` — the deployed npm copies are updated too.
 
 ### Linux VPS (headless, no desktop)
@@ -119,7 +119,7 @@ agent-browser install  # Download Chromium
 
 ```json
 {
-  "plugin": ["opencode-browser-agent"]
+  "plugins": ["opencode-browser-agent"]
 }
 ```
 
@@ -128,7 +128,7 @@ agent-browser install  # Download Chromium
 
 ```json
 {
-  "plugin": ["file:///abs/path/to/opencode-browser-agent/dist/index.js"]
+  "plugins": ["file:///abs/path/to/opencode-browser-agent/dist/index.js"]
 }
 ```
 
@@ -306,7 +306,7 @@ npm run build
 
 # In opencode.json, point at the built bundle (absolute file URL):
 {
-  "plugin": ["file:///abs/path/to/opencode-browser-agent/dist/index.js"]
+  "plugins": ["file:///abs/path/to/opencode-browser-agent/dist/index.js"]
 }
 ```
 
@@ -509,7 +509,7 @@ The plugin automatically suggests loading the skill when your prompt contains:
 
 ## Requirements
 
-- **OpenCode** >= 1.0.0
+- **OpenCode** >= 2.0.0
 - **agent-browser** CLI installed globally (`npm i -g agent-browser`,
   or `brew install agent-browser`, or `cargo install agent-browser`)
 - **Chromium** (installed via `agent-browser install`; on Linux add

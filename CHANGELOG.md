@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-10-27
+
+### Changed
+
+- Migrated plugin to the OpenCode V2 plugin API (`@opencode/plugin`,
+  `Plugin.define`, `ctx.tool.transform`, `ctx.session.synthetic`,
+  `ctx.session.hook("context")`). Required for OpenCode >= 2.0.0.
+- Installers now wire `plugins` (plural) and depend on `@opencode/plugin`.
+- README requirements updated to OpenCode >= 2.0.0.
+
+### Added
+
+- Video streaming (WebSocket) and network mocking examples in the skill.
+- Dev-tools/network-mocking/video-streaming subsection (4g) in skill.
+
+### Kept
+
+- `agent-browser >= 0.27.0` dependency and policy-first skill (supports all
+  agent-browser versions; never pkill/close the user's browser).
+
 ## [1.4.3] - 2026-10-15
 
 ### Added
