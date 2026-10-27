@@ -323,7 +323,7 @@ agent-browser tab <id>                   # switch context
 
 If the CDP endpoint is behind a proxy and returns localhost WebSocket URLs,
 rewrite them to the proxy host before connecting (agent-browser usually handles
-this; verify with `get cdp-url`). For multi-target setups pass the explicit
+this; verify with \`get cdp-url\`). For multi-target setups pass the explicit
 port/URL instead of --auto-connect.
 
 ## 5. Unicode round-trip test (Persian / emoji)
