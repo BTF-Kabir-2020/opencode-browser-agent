@@ -312,6 +312,20 @@ Video streaming (real-time WebSocket, optional):
   Warning: the screencast port has NO authentication. Verify it binds to
   127.0.0.1 only, enable it only while actively observing, and disable after.
 
+## 4h. Multi-tab targeting (when you need more than one page)
+
+agent-browser tab                       # list tabs (ids/labels)
+agent-browser tab new --label work <url> # open a labeled working tab
+agent-browser tab <id>                   # switch context
+# Prefer a single labeled work tab; never touch the user's existing tabs.
+
+## 4i. Remote / proxied CDP endpoints (advanced)
+
+If the CDP endpoint is behind a proxy and returns localhost WebSocket URLs,
+rewrite them to the proxy host before connecting (agent-browser usually handles
+this; verify with `get cdp-url`). For multi-target setups pass the explicit
+port/URL instead of --auto-connect.
+
 ## 5. Unicode round-trip test (Persian / emoji)
 
 Before submitting any text you cannot visually verify:
