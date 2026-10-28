@@ -11,6 +11,8 @@ OpenCode plugin for [agent-browser](https://github.com/vercel-labs/agent-browser
 
 Maintained by **Pouya Ghourchiani (BTF Kabir)**.
 
+Project page: https://ghourchiani.ir/projects/opencode-browser-agent
+
 ## Why this plugin?
 
 - **Uses your real browser, not a throwaway one.** It attaches to your already-running Chrome with `--auto-connect` — your logins and tabs stay, and the skill forbids killing or closing your browser.
