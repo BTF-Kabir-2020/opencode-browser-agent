@@ -184,29 +184,39 @@ export default Plugin.define({
     })
 
     // Register the skill so it shows up in OpenCode's /skills list.
-    await ctx.skill.transform((editor) => {
-      editor.add({
-        id: Skill.ID.make("agent-browser"),
-        name: Skill.Name.make("agent-browser"),
-        description: skillDescription,
-        path: "/builtin/agent-browser.md" as any,
-        content: skillTemplate,
-        autoinvoke: false,
+    // Wrapped so a skill-registration failure never disables the tools above.
+    try {
+      await ctx.skill.transform((editor) => {
+        editor.add({
+          id: Skill.ID.make("agent-browser"),
+          name: Skill.Name.make("agent-browser"),
+          description: skillDescription,
+          path: "/builtin/agent-browser.md" as any,
+          content: skillTemplate,
+          autoinvoke: false,
+        })
       })
-    })
+    } catch (err) {
+      // Non-fatal: tools (load_agent_browser_skill, obscura_backend) stay usable.
+      console.error("[opencode-browser-agent] skill registration failed:", (err as Error)?.message ?? err)
+    }
 
     // Surface the skill in the system prompt so the model knows when to use it.
-    await ctx.session.hook("context", (event) => {
-      event.system.push({
-        type: "text",
-        text: `
+    try {
+      await ctx.session.hook("context", (event) => {
+        event.system.push({
+          type: "text",
+          text: `
 <available-skills>
 ## agent-browser
 ${skillDescription}
 To use: Call the \`load_agent_browser_skill\` tool, then use bash to execute agent-browser commands.
 </available-skills>
 `,
+        })
       })
-    })
+    } catch (err) {
+      console.error("[opencode-browser-agent] context hook registration failed:", (err as Error)?.message ?? err)
+    }
   },
 })
