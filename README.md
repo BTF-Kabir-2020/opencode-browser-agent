@@ -11,6 +11,10 @@ OpenCode plugin for [agent-browser](https://github.com/vercel-labs/agent-browser
 
 Maintained by **Pouya Ghourchiani (BTF Kabir)**.
 
+> **Note:** This is an independent, third-party project. It is not built by the
+> OpenCode team and is not affiliated with [anomalyco/opencode](https://github.com/anomalyco/opencode)
+> in any way. "OpenCode" is used only to describe compatibility.
+
 Project page: https://ghourchiani.ir/projects/opencode-browser-agent
 
 ## Why this plugin?
