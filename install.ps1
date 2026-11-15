@@ -99,14 +99,10 @@ $targets = @(
     (Join-Path $env:USERPROFILE '.cache\opencode\packages\opencode-agent-browser@latest\node_modules\opencode-agent-browser\dist')
 )
 foreach ($t in $targets) {
-    if (Test-Path (Split-Path -Parent $t)) {
-        New-Item -ItemType Directory -Path $t -Force | Out-Null
-        Copy-Item (Join-Path $dist 'index.js') -Destination $t -Force
-        if (Test-Path (Join-Path $dist 'index.d.ts')) { Copy-Item (Join-Path $dist 'index.d.ts') -Destination $t -Force }
-        Write-Ok $t
-    } else {
-        Write-Warn2 "not found, skipped: $t"
-    }
+    New-Item -ItemType Directory -Path $t -Force | Out-Null
+    Copy-Item (Join-Path $dist 'index.js') -Destination $t -Force
+    if (Test-Path (Join-Path $dist 'index.d.ts')) { Copy-Item (Join-Path $dist 'index.d.ts') -Destination $t -Force }
+    Write-Ok $t
 }
 
 # make the self-named copy resolvable as a bare package name too
@@ -131,7 +127,7 @@ if (Test-Path $cfgPath) {
     $raw = [IO.File]::ReadAllText($cfgPath)
     if ($raw[0] -eq [char]0xFEFF) { $raw = $raw.Substring(1) }
     $cfg = $raw | ConvertFrom-Json
-    $distUrl = 'file:///' + ((Join-Path $dist 'index.js') -replace '\\', '/')
+    $distUrl = ([System.Uri](Join-Path $dist 'index.js')).AbsoluteUri
     if (-not $cfg.plugins) { $cfg | Add-Member -NotePropertyName plugins -NotePropertyValue @() }
     $cfg.plugins = @($distUrl)
     $json = $cfg | ConvertTo-Json -Depth 10

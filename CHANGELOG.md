@@ -5,6 +5,39 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.8] - 2026-11-14
+
+### Added
+
+- Skill section 4j "Forms, typeahead and in-page JS" - hard-won lessons
+  from a real long-running browser session: persistent eval context
+  (wrap every eval in an IIFE), framework-controlled inputs (native
+  prototype setter + input/change events), "element covered" click
+  recovery, typeahead re-snapshot flow, re-rendered modal refs, and
+  additive-form verification by row count.
+- Skill section 4e: mid-task daemon detach recovery - "Daemon version
+  mismatch"/stray "launched browser" symptoms, `tab list` as a recovery
+  probe, new-session-name re-attach, stale daemons ignoring an explicit
+  --cdp port (error names a different port than the flag), the
+  chrome://inspect "starting..." wedged state, toggle-based debugging
+  being invisible to the Win32 CommandLine filter, and the transient
+  DevToolsActivePort file.
+- Skill section 4a: base64 injection pattern for non-ASCII (Persian/RTL)
+  text, UTF-8 console encoding + snapshot-to-file reading, and the
+  cosmetic NativeCommandError note for PS 5.1.
+- Short rules 13-14 (eval/IIFE + non-ASCII handling; daemon detach
+  recovery). Section 9 failures updated with the matching symptoms.
+- Dependency floor raised to `agent-browser >= 0.43.0` (latest upstream;
+  0.41+ carries the daemon/CDP fixes this skill documents).
+
+### Fixed
+
+- install.ps1: deploy targets are now created if missing instead of
+  being silently skipped (a fresh machine ended up with NO installed
+  copy), and the `opencode.json` plugin URL is now built with
+  `[System.Uri]::AbsoluteUri` so paths containing spaces no longer
+  break plugin loading.
+
 ## [2.0.4] - 2026-10-27
 
 ### Added

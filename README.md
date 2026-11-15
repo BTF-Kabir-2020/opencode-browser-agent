@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![npm](https://img.shields.io/npm/v/opencode-browser-agent.svg)](https://www.npmjs.com/package/opencode-browser-agent)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](#easy-install--easy-update-windows-linux-macos)
-[![agent-browser](https://img.shields.io/badge/agent--browser-0.27%2B-informational)](https://github.com/vercel-labs/agent-browser)
+[![agent-browser](https://img.shields.io/badge/agent--browser-0.43%2B-informational)](https://github.com/vercel-labs/agent-browser)
 [![OpenCode](https://img.shields.io/badge/OpenCode-Plugin%202.x-brightgreen?style=flat-square)](https://opencode.ai)
 [![CI](https://github.com/BTF-Kabir-2020/opencode-browser-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/BTF-Kabir-2020/opencode-browser-agent/actions/workflows/ci.yml)
 

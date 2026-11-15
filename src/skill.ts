@@ -123,6 +123,21 @@ report the exact mismatch instead of declaring success.
 - Multi-line or quote-heavy JS: write a temp file, then
   Get-Content $env:TEMP\\s.js -Raw | agent-browser eval --stdin
   (or agent-browser eval -b <base64>). Never inline complex JS.
+- Non-ASCII text (Persian / RTL / emoji): NEVER inline it in a PowerShell
+  command - the console layer mangles it silently even when the CLI echoes
+  it back looking fine. Write the JS to a UTF-8 file and inject base64:
+    $b64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:TEMP\\s.js"))
+    agent-browser --session work eval -b $b64
+  Then run a second eval that reads the values back and compare
+  (round-trip) before trusting the fill.
+- Persian/UTF-8 output looks like mojibake in the console: set
+  [Console]::OutputEncoding = [Text.Encoding]::UTF8 at the top of the
+  command, and read redirected output with Get-Content -Encoding UTF8.
+  Snapshot to a file, then search it:
+    agent-browser snapshot -i > $env:TEMP\\snap.txt
+    Select-String -Path $env:TEMP\\snap.txt -Encoding UTF8 -Pattern 'X'
+- NativeCommandError noise around every agent-browser call is cosmetic
+  PS 5.1 stderr handling; judge by exit code and stdout, not the red text.
 - Disk/file preflight:  Test-Path 'C:\\path\\file.png' ; Get-PSDrive C
 
 ### 4b. Linux / macOS (bash, terminal)
@@ -214,6 +229,49 @@ Gotchas that cost real time (do not rediscover them):
   the same 10060. A pending confirmation prompt can block it - approving
   (agent-browser confirm <id>) releases it, and a fresh
   "--session <name>" keeps you working meanwhile.
+- Mid-task daemon restart: a "Daemon version mismatch detected,
+  restarting..." warning or a stray "[agent-browser] launched browser" in
+  any output means the daemon detached from the user's Chrome. The new
+  daemon does NOT re-attach: \`get url\` returns about:blank and \`tab\`
+  lists a single blank tab. Recovery - attach with a NEW session name:
+    agent-browser --session <new-name> --auto-connect false --cdp <port> tab
+  Verify the listing shows the USER'S tabs before acting. Retire the old
+  session name for the rest of the task; reusing it keeps launching the
+  daemon's own blank browser.
+- A wedged daemon also swallows flags: passing --cdp <some-port> while a
+  stale daemon is alive can still probe 9222 (or whatever port it cached)
+  - the error names a DIFFERENT port than the one you passed. That
+  mismatch is proof the old daemon ignored the flag; the fix is a fresh
+  session name (new daemon), not another retry with the same session.
+- After any daemon restart, run the tab list FIRST as a probe:
+    agent-browser --session <name> tab list
+  In some cases the restarted daemon rediscovers the user's real tabs by
+  itself (tab list shows YouTube/Gmail/... - you are back, keep going).
+  If it shows only about:blank instead, fall back to the new-session +
+  explicit --cdp attach above.
+- Unsaved in-page state (open modals, staged form edits, staged chips)
+  usually SURVIVES a daemon restart because the user's tab never reloaded.
+  After re-attaching, re-snapshot first - you can often continue instead
+  of redoing the work. Saved-to-server state always survives.
+- Port listens (Get-NetTCPConnection shows a chrome PID) but every attach
+  fails for minutes and /json/version + /json/list answer 404: retry 2-3
+  times with FRESH session names and a few seconds between attempts. If
+  still dead, ask the user to toggle chrome://inspect ->
+  "Allow remote debugging" OFF and back ON - the OFF/ON cycle regenerates
+  a working listener (this recovered a dead attach in real use).
+- chrome://inspect -> "Remote debugging" can stick at
+  "Server running at: starting..." and stay there even after the user
+  toggles "Allow remote debugging" several times. Treat that state as
+  wedged: diagnosing further wastes time; fall back to an explicit
+  relaunch of the profile with --remote-debugging-port (below).
+- When debugging came from the chrome://inspect Allow toggle (not a CLI
+  flag), the Win32 CommandLine filter finds NO chrome process with
+  'remote-debugging' - yet Get-NetTCPConnection shows the port LISTEN
+  owned by a chrome PID. That combination is normal for toggle-based
+  debugging; it does not mean the port is fake.
+- The DevToolsActivePort file is TRANSIENT: it can exist, then vanish
+  (Test-Path -> False) while the browser keeps running. Its presence is a
+  hint, never proof; re-check Test-Path right before relying on it.
 - The active page is often about:blank, not the tab the user is looking at.
   Work in a NEW tab; never navigate, screenshot or close their tabs.
 
@@ -326,6 +384,39 @@ rewrite them to the proxy host before connecting (agent-browser usually handles
 this; verify with \`get cdp-url\`). For multi-target setups pass the explicit
 port/URL instead of --auto-connect.
 
+## 4j. Forms, typeahead and in-page JS (hard-won)
+
+- eval state persists across calls in the same session: a top-level
+  const/let from an earlier eval makes the next one fail with
+  "Identifier 'x' has already been declared". ALWAYS wrap the body:
+    (() => { ... return JSON.stringify(result) })()
+- Framework-controlled inputs (React/Angular) ignore direct .value writes.
+  Set via the native prototype setter, then fire BOTH events:
+    const el = document.querySelector('[name="q"]');
+    const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype
+      : el.tagName === 'SELECT' ? HTMLSelectElement.prototype
+      : HTMLInputElement.prototype;
+    Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, value);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  Then READ the value back in a separate eval before saving the form.
+- Click blocked by "Element '@eN' is covered by <div>...": scroll the
+  section into view, then click via eval (dispatch mousedown, mouseup,
+  click on the target img/div), then re-snapshot.
+- Typeahead/autocomplete fields: fill -> wait -> RE-SNAPSHOT to capture
+  the suggestion's ref, click it, then pick the level/option UI that
+  appeared. If a term yields NO suggestion at all, it is not in the
+  platform's dataset - do not loop variant spellings hoping for data.
+- Modal/overlay forms re-render between steps, so refs die WITHOUT any
+  navigation. Re-snapshot before every step inside a modal.
+- Long additive forms (skills, tags, rows): add one item, wait, confirm
+  the row count grew (delete buttons +1 in the snapshot), then add the
+  next. Save once at the end, then verify with a full page read - never
+  by trusting the last click.
+- After a modal closes or the page refreshes mid-edit, staged items are
+  gone unless they were saved server-side. Check the rendered section
+  text before assuming work survived.
+
 ## 5. Unicode round-trip test (Persian / emoji)
 
 Before submitting any text you cannot visually verify:
@@ -393,8 +484,17 @@ First stop for anything weird:
   attach with --cdp <port> instead of HTTP discovery
 - "ref not found" -> re-snapshot (refs go stale on every page change)
 - element in DOM but not in snapshot -> scroll / wait, then re-snapshot
-- overlay swallows the click -> dismiss it, re-snapshot, re-click
+- overlay swallows the click -> dismiss it, re-snapshot, re-click; or
+  scroll into view + eval click (section 4j)
 - fill does nothing -> focus @ref, or "keyboard inserttext"
+- eval says "Identifier 'x' has already been declared" -> an earlier eval
+  leaked a top-level const/let; wrap every eval body in an IIFE (4j)
+- daemon suddenly logs "launched browser" mid-task, or \`get url\` returns
+  about:blank / one blank tab -> the daemon restarted and detached;
+  probe with \`tab list\`, then re-attach with a NEW session name + --cdp
+  (section 4e). Staged unsaved page state usually survives - re-snapshot.
+- attach error names a DIFFERENT port than the --cdp flag you passed ->
+  a stale daemon ignored the flag; use a fresh session name (4e)
 - warning "invalid config file ... config.json: expected value" = UTF-8 BOM
   in that JSON file. Harmless but noisy; fix by re-saving without BOM.
 
@@ -429,4 +529,10 @@ recording, HAR, tracing, network routing).
    never infer identity from one clue
 12. keep attach reports to read-only identity evidence; never handle
    credentials, cookies, tokens, 2FA, or unrelated tab content
+13. wrap every eval body in an IIFE, and never inline non-ASCII text in
+   PowerShell - base64-inject a UTF-8 JS file instead (sections 4a, 4j)
+14. if the daemon detaches mid-task (about:blank, stray "launched
+    browser", error naming a different port than --cdp), probe with
+    tab list then re-attach with a NEW session name; re-snapshot
+    before redoing work (section 4e)
 `
