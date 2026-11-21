@@ -1,0 +1,45 @@
+name: Publish to GitHub Packages
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node for GitHub Packages
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@btf-kabir-2020"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare scoped package metadata for GitHub Packages
+        run: |
+          node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync("package.json","utf8"));const base=p.name.replace(/^@[^/]+\//,"");p.name="@btf-kabir-2020/"+base;p.publishConfig={registry:"https://npm.pkg.github.com"};p.repository={type:"git",url:"https://github.com/BTF-Kabir-2020/opencode-browser-agent.git"};fs.writeFileSync("package.json",JSON.stringify(p,null,2)+"\n")'
+
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Make the package public
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method PATCH /user/packages/npm/opencode-browser-agent -f visibility=public \
+            || gh api --method PATCH /user/packages/npm/%40btf-kabir-2020%2Fopencode-browser-agent -f visibility=public
