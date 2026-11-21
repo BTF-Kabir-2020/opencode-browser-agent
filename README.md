@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![npm](https://img.shields.io/npm/v/opencode-browser-agent.svg)](https://www.npmjs.com/package/opencode-browser-agent)
+[![GitHub Packages](https://img.shields.io/badge/GitHub%20Packages-view-181717?logo=github)](https://github.com/users/BTF-Kabir-2020/packages/npm/package/opencode-browser-agent)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](#easy-install--easy-update-windows-linux-macos)
 [![agent-browser](https://img.shields.io/badge/agent--browser-0.43%2B-informational)](https://github.com/vercel-labs/agent-browser)
 [![OpenCode](https://img.shields.io/badge/OpenCode-Plugin%202.x-brightgreen?style=flat-square)](https://opencode.ai)
@@ -19,7 +20,7 @@ Project page: https://ghourchiani.ir/projects/opencode-browser-agent
 
 ## Why this plugin?
 
-- **Uses your real browser, not a throwaway one.** It attaches to your already-running Chrome with `--auto-connect` — your logins and tabs stay, and the skill forbids killing or closing your browser.
+- **Uses your real browser, not a throwaway one.** It attaches to your already-running Chrome with `--auto-connect` ΓÇö your logins and tabs stay, and the skill forbids killing or closing your browser.
 - **Policy-first.** A rewritten skill constrains how the agent drives the browser (no `pkill`, no hijacking unrelated tabs, privacy-respecting defaults), rather than leaving the model to improvise.
 - **One-command install everywhere.** Windows PowerShell, Linux desktop, and headless VPS, with a matching one-command update path.
 - **Optional, opt-in Obscura engine.** A lightweight local CDP backend you can switch on deliberately (Chrome stays the default); see [`docs/obscura.md`](docs/obscura.md).
@@ -61,7 +62,7 @@ powershell -ExecutionPolicy Bypass -File .\update.ps1
 # or: powershell -ExecutionPolicy Bypass -File .\install.ps1 -Update
 ```
 
-**Linux / macOS (bash) — works in terminal-only (headless) and GUI desktops:**
+**Linux / macOS (bash) ΓÇö works in terminal-only (headless) and GUI desktops:**
 
 ```bash
 # install / first-time setup
@@ -70,7 +71,7 @@ bash install.sh
 bash update.sh            # or: bash install.sh --update
 ```
 
-Then **restart opencode** — plugins load at startup.
+Then **restart opencode** ΓÇö plugins load at startup.
 
 What the scripts do (identical on both platforms):
 1. `git pull --ff-only` (only with `-Update` / `--update`)
@@ -82,11 +83,11 @@ What the scripts do (identical on both platforms):
 7. strips the UTF-8 BOM from `~/.agent-browser/config.json`
 
 Rollback: set `"plugins": ["opencode-browser-agent"]` back in
-`~/.config/opencode/opencode.json` — the deployed npm copies are updated too.
+`~/.config/opencode/opencode.json` ΓÇö the deployed npm copies are updated too.
 
 ### Linux VPS (headless, no desktop)
 
-Everything works on a plain Linux VPS — opencode, the plugin, and
+Everything works on a plain Linux VPS ΓÇö opencode, the plugin, and
 agent-browser. Setup once:
 
 ```bash
@@ -98,7 +99,7 @@ bash install.sh                      # plugin: build + deploy + wire config
 
 Notes for a GUI-less box:
 - Run headless (default). A desktop `~/.agent-browser/config.json` that sets
-  `"headed": true` / `"autoConnect": true` will fail here — override with
+  `"headed": true` / `"autoConnect": true` will fail here ΓÇö override with
   `agent-browser --headed false --auto-connect false open <url>`, or set both
   to `false` in that config file.
 - There is no GUI Chrome to attach to, so `--auto-connect` is pointless there;
@@ -122,7 +123,7 @@ agent-browser install  # Download Chromium
 
 ### 2. Install this plugin
 
-**From npm** (easiest) — add it by name; opencode fetches and loads it:
+**From npm** (easiest) ΓÇö add it by name; opencode fetches and loads it:
 
 ```json
 {
@@ -130,7 +131,7 @@ agent-browser install  # Download Chromium
 }
 ```
 
-**From a local build** (for development) — either run `install.ps1`
+**From a local build** (for development) ΓÇö either run `install.ps1`
 (recommended), or point `opencode.json` at the built file:
 
 ```json
@@ -484,7 +485,7 @@ obscura_backend { "action": "stop" }
 ```
 
 Safety is enforced: binds **`127.0.0.1`** only, always an **explicit port** from
-the pool `9600–9699` (reserved ports refused), **never** `--allow-file-access`,
+the pool `9600ΓÇô9699` (reserved ports refused), **never** `--allow-file-access`,
 and fixture mode (`--allow-private-network`) is **off by default** and only
 allowed with explicit loopback-only targets. Cleanup terminates a process only
 after positively verifying ownership.
@@ -546,25 +547,25 @@ npm run build
 ### Project Structure
 ```
 opencode-browser-agent/
-├── index.ts          # Plugin entry: tools + skill loader (thin)
-├── src/
-│   ├── skill.ts      # Skill template/description (single source)
-│   └── obscura/      # Opt-in Obscura backend (launcher, manager, runtime)
-├── test/
-│   ├── obscura.test.ts   # Unit tests (24)
-│   └── obscura.e2e.ts    # Real-binary E2E smoke test
-├── docs/
-│   └── obscura.md    # Opt-in backend: usage, security, matrix, rollback
-├── package.json      # npm package config (build = esbuild + tsc)
-├── tsconfig.json     # TypeScript config
-├── install.ps1       # Easy install/update - Windows
-├── install.sh        # Easy install/update - Linux/macOS
-├── update.ps1        # Windows update wrapper
-├── update.sh         # Linux/macOS update wrapper
-├── dist/             # Built output (gitignored; created by the scripts)
-│   ├── index.js
-│   └── index.d.ts
-└── README.md
+Γö£ΓöÇΓöÇ index.ts          # Plugin entry: tools + skill loader (thin)
+Γö£ΓöÇΓöÇ src/
+Γöé   Γö£ΓöÇΓöÇ skill.ts      # Skill template/description (single source)
+Γöé   ΓööΓöÇΓöÇ obscura/      # Opt-in Obscura backend (launcher, manager, runtime)
+Γö£ΓöÇΓöÇ test/
+Γöé   Γö£ΓöÇΓöÇ obscura.test.ts   # Unit tests (24)
+Γöé   ΓööΓöÇΓöÇ obscura.e2e.ts    # Real-binary E2E smoke test
+Γö£ΓöÇΓöÇ docs/
+Γöé   ΓööΓöÇΓöÇ obscura.md    # Opt-in backend: usage, security, matrix, rollback
+Γö£ΓöÇΓöÇ package.json      # npm package config (build = esbuild + tsc)
+Γö£ΓöÇΓöÇ tsconfig.json     # TypeScript config
+Γö£ΓöÇΓöÇ install.ps1       # Easy install/update - Windows
+Γö£ΓöÇΓöÇ install.sh        # Easy install/update - Linux/macOS
+Γö£ΓöÇΓöÇ update.ps1        # Windows update wrapper
+Γö£ΓöÇΓöÇ update.sh         # Linux/macOS update wrapper
+Γö£ΓöÇΓöÇ dist/             # Built output (gitignored; created by the scripts)
+Γöé   Γö£ΓöÇΓöÇ index.js
+Γöé   ΓööΓöÇΓöÇ index.d.ts
+ΓööΓöÇΓöÇ README.md
 ```
 
 ## Contributing
